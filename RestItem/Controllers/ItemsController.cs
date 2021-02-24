@@ -58,7 +58,7 @@ namespace RestItem.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public Item Put(int id, [FromBody] Item value)
+        public ActionResult<Item> Put(int id, [FromBody] Item value)
         {
            return _manager.Update(id,value);
         }

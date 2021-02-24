@@ -52,7 +52,7 @@ namespace RestItem.Managers
 
         public Item Add(Item value)
         {
-            Item.ValidateItem(value);
+            value.ValidateItem();
             value.Id = _nextId++;
             Data.Add(value);
             return value;

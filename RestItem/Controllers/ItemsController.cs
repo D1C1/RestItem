@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using RestItem.Managers;
 using RestItem.Models;
 
@@ -17,6 +18,7 @@ namespace RestItem.Controllers
         private readonly ItemsManager _manager = new ItemsManager();
         // GET: api/<ItemsController>
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public IEnumerable<Item> Get([FromQuery] string name, [FromQuery] string sortBy)
         {
             return _manager.GetAll(name,sortBy);
@@ -24,20 +26,38 @@ namespace RestItem.Controllers
 
         // GET api/<ItemsController>/5
         [HttpGet("{id}")]
-        public Item Get(int id)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<Item> Get(int id)
         {
-            return _manager.GetById(id);
+            Item item = _manager.GetById(id);
+            if (item == null) return NotFound("Not found");
+            return Ok(item);
         }
 
         // POST api/<ItemsController>
         [HttpPost]
-        public void Post([FromBody] Item value)
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<Item> Post([FromBody] Item value)
         {
-            _manager.Add(value);
+            try
+            {
+                Item item = _manager.Add(value);
+                string uri = Url.RouteUrl(RouteData.Values) + "/" + value.Id;
+                return Created(uri,item);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         // PUT api/<ItemsController>/5
         [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public Item Put(int id, [FromBody] Item value)
         {
            return _manager.Update(id,value);
@@ -45,6 +65,8 @@ namespace RestItem.Controllers
 
         // DELETE api/<ItemsController>/5
         [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public void Delete(int id)
         {
             _manager.Delete(id);

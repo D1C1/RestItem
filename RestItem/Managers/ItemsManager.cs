@@ -50,10 +50,12 @@ namespace RestItem.Managers
            return Data.Find(item => item.Id == id);
         }
 
-        public void Add(Item value)
+        public Item Add(Item value)
         {
+            Item.ValidateItem(value);
             value.Id = _nextId++;
             Data.Add(value);
+            return value;
         }
 
         public void Delete(int id)

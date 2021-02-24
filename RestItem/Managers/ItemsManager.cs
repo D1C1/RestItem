@@ -68,6 +68,7 @@ namespace RestItem.Managers
 
         public Item Update(int id, Item value)
         {
+            value.ValidateItem();
             Item item = Data.Find(item1 => item1.Id == id);
             if (item == null) return null;
             item.Itemquality = value.Itemquality;

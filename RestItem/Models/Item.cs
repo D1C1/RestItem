@@ -16,7 +16,7 @@ namespace RestItem.Models
         {
             if (this.Name.Length<=2)
             {
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentException();
             }
 
             if (this.Quantity<0)

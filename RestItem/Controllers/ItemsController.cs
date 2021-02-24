@@ -21,7 +21,7 @@ namespace RestItem.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IEnumerable<Item> Get([FromQuery] string name, [FromQuery] string sortBy)
         {
-            return _manager.GetAll(name,sortBy);
+            return _manager.GetAll(name, sortBy);
         }
 
         // GET api/<ItemsController>/5
@@ -45,7 +45,7 @@ namespace RestItem.Controllers
             {
                 Item item = _manager.Add(value);
                 string uri = Url.RouteUrl(RouteData.Values) + "/" + value.Id;
-                return Created(uri,item);
+                return Created(uri, item);
             }
             catch (Exception e)
             {
@@ -60,16 +60,27 @@ namespace RestItem.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<Item> Put(int id, [FromBody] Item value)
         {
-           return _manager.Update(id,value);
+            try
+            {
+                Item updatedItem = _manager.Update(id, value);
+                if (updatedItem == null) return NotFound("No such item, id: " + id);
+                return Ok(updatedItem);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // DELETE api/<ItemsController>/5
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public void Delete(int id)
+        public ActionResult<Item> Delete(int id)
         {
-            _manager.Delete(id);
+            Item deletedItem = _manager.Delete(id);
+            if (deletedItem == null) return NotFound("No such book, id: " + id);
+            return Ok(deletedItem);
         }
     }
 }

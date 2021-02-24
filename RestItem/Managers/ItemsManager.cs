@@ -58,11 +58,12 @@ namespace RestItem.Managers
             return value;
         }
 
-        public void Delete(int id)
+        public Item Delete(int id)
         {
             Item item = Data.Find(item1 => item1.Id == id);
-            if (item == null) return;
+            if (item == null) return null;
             Data.Remove(item);
+            return item;
         }
 
         public Item Update(int id, Item value)
